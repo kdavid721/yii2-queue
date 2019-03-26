@@ -78,6 +78,7 @@ class Controller extends \yii\console\Controller
         }
 
         $this->queue = \yii\di\Instance::ensure($this->queue, Queue::className());
+        $this->queue->command = $this_name.'/run';
         $this->queue->processRunner->setScriptPath($this->getScriptPath());
     }
 
