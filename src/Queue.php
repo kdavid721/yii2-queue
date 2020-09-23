@@ -151,6 +151,11 @@ abstract class Queue extends \yii\base\Component
     public $sleepTimeout = 1;
 
     /**
+     * @var int $countdown limit worker iteration count to this value instead of infinity
+     */
+    public $countdown = null;
+
+    /**
      * @var int $timeout seconds after which the process will timeout
      */
     public $timeout = null;

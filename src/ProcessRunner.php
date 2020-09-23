@@ -118,7 +118,7 @@ class ProcessRunner extends \yii\base\Component implements IteratorAggregate
      * @param array $env enviromental variables for the sub proc
      * @return void
      */
-    public function listen( $cwd = null, $timeout = 0, array $env = null )
+    public function listen( $cwd = null, $timeout = 0, array $env = null)
     {
         $this->cwd = $cwd;
         $this->env = $env;
@@ -126,6 +126,8 @@ class ProcessRunner extends \yii\base\Component implements IteratorAggregate
         $this->initSignalHandler();
 
         declare(ticks = 1);
+
+        $countdown = $this->getCountdown();
 
         while (true) {
 
@@ -140,6 +142,8 @@ class ProcessRunner extends \yii\base\Component implements IteratorAggregate
 
             // if we have queue and open spots, launch new ones
             if ( $queueSize ) {
+                $countdown = $this->getCountdown();
+
                 if ( $this->getCanOpenNew() ) {
                     $this->stdout("Running new  process...\n");
                     $this->runProcess(
@@ -162,6 +166,13 @@ class ProcessRunner extends \yii\base\Component implements IteratorAggregate
             // sleep if we want to between lanuching new processes
             if ($this->getSleepTimeout() > 0) {
                 sleep($this->getSleepTimeout());
+            }
+            
+            if (!empty($countdown)) {
+                $countdown--;
+                if ($countdown <= 0) {
+                    break;
+                }
             }
         }
     }
@@ -446,5 +457,13 @@ class ProcessRunner extends \yii\base\Component implements IteratorAggregate
     protected function stderr($string)
     {
         return Console::stderr($string);
+    }
+
+    protected function getCountdown()
+    {
+        if (!empty($this->getQueue()->countdown)) {
+            return $this->getQueue()->countdown;
+        }
+        return null;
     }
 }

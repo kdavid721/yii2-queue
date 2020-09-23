@@ -57,6 +57,8 @@ class Controller extends \yii\console\Controller
      */
     public $sleepTimeout = 0;
 
+    public $countdown = NULL;
+
     /**
      * @var string the name of the command.
      */
@@ -78,7 +80,7 @@ class Controller extends \yii\console\Controller
         }
 
         $this->queue = \yii\di\Instance::ensure($this->queue, Queue::className());
-        $this->queue->command = $this_name.'/run';
+        $this->queue->command = $this->_name.'/run';
         $this->queue->processRunner->setScriptPath($this->getScriptPath());
     }
 
